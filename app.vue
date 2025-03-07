@@ -8,8 +8,7 @@
 
 const appConfig = useAppConfig();
 useHead({
-	title: appConfig.brand,
-	titleTemplate: `%s - ${appConfig.title}`
+	titleTemplate: `${appConfig.title}`
 });
 
 </script>

@@ -17,6 +17,8 @@
     "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",
     "sass": "^1.85.1",
-    "@primevue/themes": "^4.3.1"
+    "@primevue/themes": "^4.3.1",
+    "primevue": "^3.0.0",
+    "@vueuse/nuxt": "10.9.0"
   }
 }

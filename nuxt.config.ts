@@ -12,7 +12,12 @@ export default defineNuxtConfig({
 
   modules: [
     'nuxt-primevue',
+    '@vueuse/nuxt',
   ],
+
+  primevue: {
+    options: { ripple: true },
+  },
 
   css: [
     "primeicons/primeicons.css",
@@ -25,6 +30,10 @@ export default defineNuxtConfig({
 
   build: {
     transpile: ['nuxt', 'primevue'],
+  },
+
+  sourcemap: {
+    client: false,
   },
 
   compatibilityDate: '2024-11-01',

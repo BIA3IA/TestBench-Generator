@@ -16,7 +16,7 @@
   display: flex;
   height: 100px;
   padding: 0 20px;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
@@ -29,13 +29,6 @@
 .logo-image {
   width: 900px;
   height: auto;
-}
-
-.layout-topbar-user {
-  display: flex;
-  align-items: center;
-  position: relative;
-  justify-content: flex-end;
 }
 
 </style>
