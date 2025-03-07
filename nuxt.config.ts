@@ -1,6 +1,4 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import path from "path";
-
 export default defineNuxtConfig({
   app: {
     baseURL: "/testbench-generator",
@@ -13,13 +11,8 @@ export default defineNuxtConfig({
   },
 
   modules: [
-    '@vueuse/nuxt',
     'nuxt-primevue',
-    '@nuxt/devtools',
-    'nuxt-security',
   ],
-
-  devtools: { enabled: process.env.NODE_ENV == "development" },
 
   css: [
     "primeicons/primeicons.css",
@@ -29,43 +22,11 @@ export default defineNuxtConfig({
   ],
 
   ssr: false,
-  
-  hooks: {
-    "pages:extend"(pages) {
-      const pagesToRemove = [];
-      pages.forEach((page) => {
-        if (page.path.includes("module")) pagesToRemove.push(page);
-      });
-
-      pagesToRemove.forEach((page) => {
-        pages.splice(pages.indexOf(page), 1);
-      });
-    },
-  },
 
   build: {
-    transpile: ["primevue"],
-    alias: {
-      "@components": path.resolve(__dirname, "components"),
-      "@utils": path.resolve(__dirname, "utils"),
-    },
+    transpile: ['nuxt', 'primevue'],
   },
 
-  vite: {
-    resolve: {
-      alias: {
-        "@components": path.resolve(__dirname, "components"),
-        "@utils": path.resolve(__dirname, "utils"),
-      },
-    },
-  },
-
-  plugins: [
-    { src: '~/plugins/primevue.js', ssr: false },
-  ],
-
-  sourcemap: {
-    client: false,
-  },
-
-});
+  compatibilityDate: '2024-11-01',
+  devtools: { enabled: true }
+})
