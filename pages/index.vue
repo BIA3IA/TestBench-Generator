@@ -12,20 +12,20 @@
     </div>
 
     <!-- Form per l'inserimento dei parametri -->
-    <Form class="flex p-4 pt-0 mt-0" :validation-schema="schema" @submit="onSubmit">
-        <div class="p-fluid formgrid grid">
+    <Form class="flex align-items-center p-4 pt-0 mt-0" :validation-schema="schema" @submit="onSubmit">
+        <div class="p-fluid formgrid grid flex">
             <div class="field col-12 md:col-3">
                 <label for="clock-period" class="text-colored font-bold">Periodo di Clock:</label>
                 <Field :rules="schema.fields.CLOCK_PERIOD" v-model="form.CLOCK_PERIOD" name="CLOCK_PERIOD">
-                    <InputNumber id="clock-period" suffix=" ns" class="outlined w-full" v-model="form.CLOCK_PERIOD"
+                    <InputNumber id="clock-period" suffix=" ns" class="outlined" v-model="form.CLOCK_PERIOD"
                         required :useGrouping="false" />
                     <ErrorMessage class="error-colored" name="CLOCK_PERIOD" />
                 </Field>
             </div>
             <div class="field col-12 md:col-3">
-                <label for="sequence-length" class="text-colored font-bold">Lunghezza della Sequenza:</label>
+                <label for="scenario-length" class="text-colored font-bold">Lunghezza della Sequenza:</label>
                 <Field :rules="schema.fields.SCENARIO_LENGTH" v-model="form.SCENARIO_LENGTH" name="SCENARIO_LENGTH">
-                    <InputNumber id="sequence-length" class="outlined w-full" v-model="form.SCENARIO_LENGTH" required
+                    <InputNumber id="scenario-length" class="outlined" v-model="form.SCENARIO_LENGTH" required
                         :useGrouping="false" />
                     <ErrorMessage class="error-colored" name="SCENARIO_LENGTH" />
                 </Field>
@@ -33,7 +33,7 @@
             <div class="field col-12 md:col-3">
                 <label for="memory-address" class="text-colored font-bold">Indirizzo di Memoria:</label>
                 <Field :rules="schema.fields.SCENARIO_ADDRESS" v-model="form.SCENARIO_ADDRESS" name="SCENARIO_ADDRESS">
-                    <InputNumber id="memory-address" class="outlined w-full" v-model="form.SCENARIO_ADDRESS" required
+                    <InputNumber id="memory-address" class="outlined" v-model="form.SCENARIO_ADDRESS" required
                         :useGrouping="false" />
                     <ErrorMessage class="error-colored" name="SCENARIO_ADDRESS" />
                 </Field>
@@ -50,26 +50,26 @@
                 </div>
             </div>
             <div class="field col-12">
-                <label for="sequence-input" class="text-colored font-bold">Genera Valori Casuali o Inserisci la
+                <label for="scenario-input" class="text-colored font-bold">Genera Valori Casuali o Inserisci la
                     Tua Sequenza
                     Numerica:</label>
                 <div class="grid pt-2">
                     <div class="col-12 md:col-8">
                         <Field :rules="schema.fields.SCENARIO_INPUT" v-model="form.SCENARIO_INPUT"
                             name="SCENARIO_INPUT">
-                            <InputText id="sequence-input" class="outlined w-full" v-model="form.SCENARIO_INPUT"
+                            <InputText id="scenario-input" class="outlined" v-model="form.SCENARIO_INPUT"
                                 required placeholder="Inserisci i valori separati da virgola" />
                             <ErrorMessage class="error-colored" name="SCENARIO_INPUT" />
                         </Field>
                     </div>
                     <div class="col-12 md:col-4">
-                        <Button class="p-button-primary w-full" label="Genera Valori Casuali"
+                        <Button class="p-button-primary" label="Genera Valori Casuali"
                             @click="generateRandomValues" />
                     </div>
                 </div>
             </div>
             <div class="field col-12">
-                <Button class="p-button-primary w-full" type="submit" label="Genera Testbench" />
+                <Button class="p-button-primary" type="submit" label="Genera Testbench" />
             </div>
         </div>
     </Form>
@@ -251,5 +251,3 @@ function downloadVHDLFile(content, filename = "testbench.vhd") {
 
 </script>
 
-
-<style scoped></style>

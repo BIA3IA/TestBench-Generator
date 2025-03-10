@@ -18,25 +18,23 @@
 	color: #fe25e1;
 }
 
+.outlined {
+	border: 1px solid #9925fe;
+}
+
 .status-button-group {
 	display: flex;
 	gap: 0.5rem;
 }
 
 .p-button-secondary {
-	background-color: #a1a1a1 !important;
-	/* Grigio chiaro */
-	color: #3a3a3a !important;
-	/* Testo grigio scuro */
-}
-
-.outlined {
-	border: 1px solid #9925fe;
+	background-color: #a1a1a1 !important; /* Grigio chiaro */
+	color: #3a3a3a !important; /* Testo grigio scuro */
+	height: 45px;
 }
 
 .p-button-primary {
-	background-color: #9925fe !important;
-	/* Viola */
-	color: #ffffff !important;
-	/* Testo bianco */
+	background-color: #9925fe !important; /* Viola */
+	color: #ffffff !important; /* Testo bianco */
+	height: 45px;
 }
