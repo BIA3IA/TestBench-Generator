@@ -13,7 +13,7 @@
 
 		<!-- Form per l'inserimento dei parametri -->
 		<div class="flex w-full h-full overflow-y-auto p-2 pt-0 mt-0">
-			<Form :validation-schema="schema" @submit.prevent="onSubmit" class="p-2">
+			<Form :validation-schema="schema" @submit="onSubmit" class="p-2">
 				<div class="p-fluid formgrid grid">
 					<div class="field col-12 md:col-3">
 						<label for="clock-period" class="text-colored font-bold">Periodo di Clock:</label>
@@ -104,14 +104,14 @@ const schema = yup.object().shape({
   SCENARIO_LENGTH: yup.number()
     .required('La lunghezza della sequenza è obbligatoria')
     .positive('Deve essere un numero positivo')
+    .integer('Deve essere un numero intero'),
+  SCENARIO_ADDRESS: yup.number()
+    .required('L\'indirizzo di memoria è obbligatorio')
+    .positive('Deve essere un numero positivo')
     .integer('Deve essere un numero intero')
 	.test('is-valid-address', function (value) {
       return validateScenarioAddress(value, this);
     }),
-  SCENARIO_ADDRESS: yup.number()
-    .required('L\'indirizzo di memoria è obbligatorio')
-    .positive('Deve essere un numero positivo')
-    .integer('Deve essere un numero intero'),
   SCENARIO_INPUT: yup.string()
     .required('La sequenza numerica è obbligatoria')
     .test(
@@ -157,7 +157,7 @@ const validateScenarioAddress = (address, context) => {
   const maxAddress = MAX_RAM_SIZE - 17 - scenarioLength;
   if (address > maxAddress) {
     return context.createError({
-      message: `L'indirizzo di memoria è troppo alto. Deve essere inferiore a ${maxAddress + 1}.`,
+      message: `L'indirizzo di memoria è troppo alto. Deve essere inferiore a ${maxAddress}.`,
     });
   }
   return true;
@@ -168,11 +168,48 @@ function setScenario(value) {
 }
 
 // Applicare filtro differenziale di ordine 5 o 3
-function generateOutput(){
-	const input = form.value.SCENARIO_INPUT.split(',').map(num => parseInt(num));
-	const output = [];
+function generateOutput() {
+    const input = form.value.SCENARIO_INPUT.split(',').map(num => parseInt(num.trim()));
+    const output = [];
+    const isOrder3 = form.value.SCENARIO_S === 0;
 
-	form.value.SCENARIO_OUTPUT = output.join(", ");
+    // Coefficienti e normalizzazione in base all'ordine scelto
+    const coeffs = isOrder3 ? [0, -1, 8, 0, -8, 1, 0] : [1, -9, 45, 0, -45, 9, -1];
+    const filterLength = coeffs.length;
+    const halfFilter = Math.floor(filterLength / 2);
+
+    // Normalizzazione con shift bitwise
+    function normalize(value, order) {
+        let result = 0;
+        if (order === 3) {
+            result += (value >> 4) + (value < 0 ? 1 : 0); // 1/16
+            result += (value >> 6) + (value < 0 ? 1 : 0); // 1/64
+            result += (value >> 8) + (value < 0 ? 1 : 0); // 1/256
+            result += (value >> 10) + (value < 0 ? 1 : 0); // 1/1024
+        } else {
+            result += (value >> 6) + (value < 0 ? 1 : 0); // 1/64
+            result += (value >> 10) + (value < 0 ? 1 : 0); // 1/1024
+        }
+        return result;
+    }
+
+    // Applicazione del filtro
+    for (let i = 0; i < input.length; i++) {
+        let acc = 0;
+        for (let j = 0; j < filterLength; j++) {
+            const index = i + j - halfFilter;
+            const value = (index >= 0 && index < input.length) ? input[index] : 0; // Bordi con valore 0
+            acc += value * coeffs[j];
+        }
+
+        // Normalizzazione e saturazione
+        let normalized = normalize(acc, isOrder3 ? 3 : 5);
+        let saturated = Math.max(-128, Math.min(127, normalized));
+
+        output.push(saturated);
+    }
+
+    form.value.SCENARIO_OUTPUT = output.join(', ');
 }
 
 // Genera valori casuali compresi tra -128 e 127
@@ -187,10 +224,35 @@ function generateRandomValues() {
 
 // Genera il testbench
 const onSubmit = handleSubmit(async () => {
-	if (await schema.validate(form.value)) {
-		generateTestbench(form.value);
-	}
+    try {
+        // Validazione del form
+        await schema.validate(form.value);
+
+        // Genera il filtro e l'output
+        generateOutput();
+
+        // Genera il codice VHDL
+        const vhdlContent = generateTestbench(form.value);
+
+        // Scarica il file VHDL
+        downloadVHDLFile(vhdlContent);
+
+    } catch (err) {
+        console.error("Errore nella generazione del testbench:", err);
+    }
 });
+
+function downloadVHDLFile(content, filename = "testbench.vhd") {
+    const blob = new Blob([content], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
 
 </script>
 

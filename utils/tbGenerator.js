@@ -34,12 +34,10 @@ architecture project_tb_arch of tb2425 is
     constant SCENARIO_LENGTH : integer := ${params.SCENARIO_LENGTH};
     constant SCENARIO_LENGTH_STL : std_logic_vector(15 downto 0) := std_logic_vector(to_unsigned(SCENARIO_LENGTH, 16));
     type scenario_type is array (0 to SCENARIO_LENGTH-1) of integer;
-
-     constant SCENARIO_S : integer := ${params.SCENARIO_S};
-
+    
     signal scenario_config : scenario_config_type := (to_integer(unsigned(SCENARIO_LENGTH_STL(15 downto 8))),   -- K1
                                                       to_integer(unsigned(SCENARIO_LENGTH_STL(7 downto 0))),    -- K2
-                                                      SCENARIO_S,                                               -- S
+                                                      ${params.SCENARIO_S},                                               -- S
                                                       0, -1, 8, 0, -8, 1, 0, 1, -9, 45, 0, -45, 9, -1           -- C1-C14
                                                       );
     signal scenario_input : scenario_type := (${params.SCENARIO_INPUT});
