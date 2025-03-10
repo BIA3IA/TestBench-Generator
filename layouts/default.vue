@@ -33,16 +33,3 @@ const containerClass = computed(() => {
 });
 
 </script>
-<style scoped>
-.card {
-	padding: 50px;
-	border-radius: 50px;
-	background-color: #1e1e1e;
-	margin-bottom: 20px;
-	margin-top: 20px;
-	margin-left: 20px;
-	margin-right: 20px;
-	border: 2px solid #9925fe;
-	box-shadow: #9925fe 0px 0px 10px 0px;
-}
-</style>

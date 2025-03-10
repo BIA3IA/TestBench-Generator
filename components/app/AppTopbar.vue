@@ -1,9 +1,6 @@
 <template>
-  <div class="layout-topbar">
-    <div class="layout-topbar-logo">
-      <img src="/title.png" alt="Testbench Generator" class="logo-image">
-  	</div>
-  
+  <div class="layout-topbar flex-wrap flex layout-topbar-logo">
+    <img src="/title.png" alt="Testbench Generator" class="logo-image">
   </div>
 </template>
 
@@ -27,7 +24,8 @@
 }
 
 .logo-image {
-  width: 900px;
+  width: 100%;
+  max-width: 900px;
   height: auto;
 }
 

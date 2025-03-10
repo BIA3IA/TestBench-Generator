@@ -7,7 +7,7 @@
 				del Progetto di Reti Logiche del Politecnico di Milano.
 				Compila i parametri di test e ottieni un testbench personalizzato!
 				<br>
-				Se vuoi più informazioni sul progetto, visita questo <a href="https://www.reti-logiche.it/progetto">link</a>.
+				Se vuoi più informazioni sul progetto, visita questo <a href="https://github.com/BIA3IA/TestBench-Generator">link</a>.
 			</h4>
 		</div>
 
@@ -20,7 +20,7 @@
 						<Field :rules="schema.fields.CLOCK_PERIOD" v-model="form.CLOCK_PERIOD" name="CLOCK_PERIOD">
 							<InputNumber id="clock-period" suffix=" ns" class="outlined w-full" v-model="form.CLOCK_PERIOD"
 								required :useGrouping="false" />
-							<ErrorMessage name="CLOCK_PERIOD" />
+							<ErrorMessage class="error-colored" name="CLOCK_PERIOD" />
 						</Field>
 					</div>
 					<div class="field col-12 md:col-3">
@@ -29,7 +29,7 @@
 							name="SCENARIO_LENGTH">
 							<InputNumber id="sequence-length" class="outlined w-full" v-model="form.SCENARIO_LENGTH"
 								required :useGrouping="false" />
-							<ErrorMessage name="SCENARIO_LENGTH" />
+							<ErrorMessage class="error-colored" name="SCENARIO_LENGTH" />
 						</Field>
 					</div>
 					<div class="field col-12 md:col-3">
@@ -38,7 +38,7 @@
 							name="SCENARIO_ADDRESS">
 							<InputNumber id="memory-address" class="outlined w-full" v-model="form.SCENARIO_ADDRESS"
 								required :useGrouping="false" />
-							<ErrorMessage name="SCENARIO_ADDRESS" />
+							<ErrorMessage class="error-colored" name="SCENARIO_ADDRESS" />
 						</Field>
 					</div>
 					<div class="field col-12 md:col-3">
@@ -62,7 +62,7 @@
 									name="SCENARIO_INPUT">
 								<InputText id="sequence-input" class="outlined w-full" v-model="form.SCENARIO_INPUT"
 									required placeholder="Inserisci i valori separati da virgola" />
-								<ErrorMessage name="SCENARIO_INPUT" />
+								<ErrorMessage class="error-colored" name="SCENARIO_INPUT" />
 								</Field>
 							</div>
 							<div class="col-12 md:col-4">
@@ -258,30 +258,5 @@ function downloadVHDLFile(content, filename = "testbench.vhd") {
 
 
 <style scoped>
-.text-colored {
-	color: #9925fe;
-}
 
-.status-button-group {
-	display: flex;
-	gap: 0.5rem;
-}
-
-.p-button-secondary {
-	background-color: #a1a1a1 !important;
-	/* Grigio chiaro */
-	color: #3a3a3a !important;
-	/* Testo grigio scuro */
-}
-
-.outlined {
-	border: 1px solid #9925fe;
-}
-
-.p-button-primary {
-	background-color: #9925fe !important;
-	/* Viola */
-	color: #ffffff !important;
-	/* Testo bianco */
-}
 </style>
