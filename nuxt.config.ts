@@ -10,6 +10,10 @@ export default defineNuxtConfig({
     },
   },
 
+  nitro: {
+    preset: "vercel", // Ottimizza per Vercel
+  },
+
   modules: [
     'nuxt-primevue',
     '@vueuse/nuxt',
@@ -24,9 +28,10 @@ export default defineNuxtConfig({
     "primeflex/primeflex.css",
     "primevue/resources/themes/mdc-dark-deeppurple/theme.css",
     "primevue/resources/primevue.min.css",
+    "@/styles/global.css",
   ],
 
-  ssr: false,
+  ssr: true,
 
   build: {
     transpile: ['nuxt', 'primevue'],
