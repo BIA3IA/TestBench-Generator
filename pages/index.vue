@@ -5,8 +5,9 @@
 			<h4 class="text-colored text-justify">
 				Questo tool ti permette di generare automaticamente un file VHDL di testbench basato sulle specifiche
 				del Progetto di Reti Logiche del Politecnico di Milano.
-				Compila i parametri di test e ottieni un testbench personalizzato. Se vuoi più informazioni sul
-				progetto, visita questo <a href="https://www.reti-logiche.it/progetto">link</a>.
+				Compila i parametri di test e ottieni un testbench personalizzato!
+				<br>
+				Se vuoi più informazioni sul progetto, visita questo <a href="https://www.reti-logiche.it/progetto">link</a>.
 			</h4>
 		</div>
 
@@ -71,8 +72,7 @@
 						</div>
 					</div>
 					<div class="field col-12">
-						<Button class="p-button-primary w-full" type="submit" label="Genera Testbench"
-							@click="downloadTB" />
+						<Button class="p-button-primary w-full" type="submit" label="Genera Testbench"/>
 					</div>
 				</div>
 			</Form>
@@ -85,6 +85,8 @@ import { generateTestbench } from '~/utils/tbGenerator';
 import * as yup from 'yup';
 import { useForm, Form, Field, ErrorMessage } from 'vee-validate';
 
+const { handleSubmit } = useForm();
+
 const form = ref({
 	CLOCK_PERIOD: 20,
 	SCENARIO_LENGTH: 24,
@@ -94,36 +96,86 @@ const form = ref({
 	SCENARIO_ADDRESS: 1234,
 });
 
-const { handleSubmit } = useForm();
-
-// Validazione dei campi del form
-const schema = yup.object({
-	CLOCK_PERIOD: yup.number()
-		.required('Il periodo di clock è obbligatorio')
-		.positive('Deve essere un numero positivo'),
-	SCENARIO_LENGTH: yup.number()
-		.required('La lunghezza della sequenza è obbligatoria')
-		.positive('Deve essere un numero positivo')
-		.integer('Deve essere un numero intero'),
-	SCENARIO_ADDRESS: yup.number()
-		.required('L\'indirizzo di memoria è obbligatorio')
-		.positive('Deve essere un numero positivo')
-		.integer('Deve essere un numero intero'),
-	SCENARIO_INPUT: yup.string()
-		.required('La sequenza numerica è obbligatoria')
-		.matches(/^(-?\d+,)*-?\d+$/, 'La sequenza deve essere una lista di numeri separati da virgola'),
+// Schema di validazione
+const schema = yup.object().shape({
+  CLOCK_PERIOD: yup.number()
+    .required('Il periodo di clock è obbligatorio')
+    .positive('Deve essere un numero positivo'),
+  SCENARIO_LENGTH: yup.number()
+    .required('La lunghezza della sequenza è obbligatoria')
+    .positive('Deve essere un numero positivo')
+    .integer('Deve essere un numero intero')
+	.test('is-valid-address', function (value) {
+      return validateScenarioAddress(value, this);
+    }),
+  SCENARIO_ADDRESS: yup.number()
+    .required('L\'indirizzo di memoria è obbligatorio')
+    .positive('Deve essere un numero positivo')
+    .integer('Deve essere un numero intero'),
+  SCENARIO_INPUT: yup.string()
+    .required('La sequenza numerica è obbligatoria')
+    .test(
+      'is-valid-sequence',
+      function(value) {
+        return validateScenarioInput(value, this);
+      }
+    ),
 });
+
+// Funzione di validazione per SCENARIO_INPUT
+const validateScenarioInput = (value, context) => {
+  const scenarioLength = context.parent.SCENARIO_LENGTH;
+
+  if (!value) {
+    return context.createError({ message: 'La sequenza numerica è obbligatoria' });
+  }
+
+  const numbers = value.split(',').map(num => num.trim());
+
+  if (numbers.length !== scenarioLength) {
+    return context.createError({ message: `La sequenza deve contenere esattamente ${scenarioLength} numeri` });
+  }
+
+  for (let num of numbers) {
+    const parsedNum = parseInt(num, 10);
+    if (isNaN(parsedNum)) {
+      return context.createError({ message: `La sequenza contiene un valore non numerico: "${num}"` });
+    }
+    if (parsedNum < -128 || parsedNum > 127) {
+      return context.createError({ message: `Il numero ${parsedNum} non è compreso tra -128 e 127` });
+    }
+  }
+
+  return true;
+};
+
+// Validazione per SCENARIO_ADDRESS
+const MAX_RAM_SIZE = 65536;
+
+const validateScenarioAddress = (address, context) => {
+  const scenarioLength = context.parent.SCENARIO_LENGTH;
+  const maxAddress = MAX_RAM_SIZE - 17 - scenarioLength;
+  if (address > maxAddress) {
+    return context.createError({
+      message: `L'indirizzo di memoria è troppo alto. Deve essere inferiore a ${maxAddress + 1}.`,
+    });
+  }
+  return true;
+};
 
 function setScenario(value) {
 	form.value.SCENARIO_S = value;
 }
 
-const onSubmit = handleSubmit(async () => {
-	if (await schema.validate(form.value)) {
-		submitForm();
-	}
-});
+// Applicare filtro differenziale di ordine 5 o 3
+function generateOutput(){
+	const input = form.value.SCENARIO_INPUT.split(',').map(num => parseInt(num));
+	const output = [];
 
+	form.value.SCENARIO_OUTPUT = output.join(", ");
+}
+
+// Genera valori casuali compresi tra -128 e 127
 function generateRandomValues() {
 	const values = [];
 
@@ -133,14 +185,12 @@ function generateRandomValues() {
 	form.value.SCENARIO_INPUT = values.join(", ");
 }
 
-function downloadTB() {
-	const blob = new Blob([generateTestbench(form.value)], { type: 'text/plain' });
-	const url = URL.createObjectURL(blob);
-}
-
-const submitForm = () => {
-	generateTestbench(form.value);
-};
+// Genera il testbench
+const onSubmit = handleSubmit(async () => {
+	if (await schema.validate(form.value)) {
+		generateTestbench(form.value);
+	}
+});
 
 </script>
 
