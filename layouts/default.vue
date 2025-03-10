@@ -42,7 +42,7 @@ const containerClass = computed(() => {
 	margin-top: 20px;
 	margin-left: 20px;
 	margin-right: 20px;
-	border: 2px solid #ab47bc;
-	box-shadow: #ab47bc 0px 0px 10px 0px;
+	border: 2px solid #9925fe;
+	box-shadow: #9925fe 0px 0px 10px 0px;
 }
 </style>
