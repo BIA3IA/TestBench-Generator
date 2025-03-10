@@ -1,5 +1,5 @@
 <template>
-  <div class="layout-topbar flex-wrap flex layout-topbar-logo">
+  <div class="layout-topbar flex-wrap layout-topbar-logo">
     <img src="/title.png" alt="Testbench Generator" class="logo-image">
   </div>
 </template>
@@ -28,5 +28,4 @@
   max-width: 900px;
   height: auto;
 }
-
 </style>
