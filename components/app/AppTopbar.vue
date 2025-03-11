@@ -1,6 +1,7 @@
 <template>
-  <div class="layout-topbar flex-wrap layout-topbar-logo">
-    <img src="/title.png" alt="Testbench Generator" class="logo-image">
+  <div class="flex-wrap layout-topbar">
+    <img src="/testbenchTitle.png" alt="Testbench Generator" class="logo-image">
+    <img src="/generatorTitle.png" alt="Testbench Generator" class="logo-image">
   </div>
 </template>
 
@@ -11,21 +12,15 @@
 <style lang="scss" scoped>
 .layout-topbar {
   display: flex;
-  height: 100px;
-  padding: 0 20px;
-  justify-content: center;
-  align-items: center;
-}
-
-.layout-topbar-logo {
-  display: flex;
+  min-height: 100px;
+  padding: 0 px;
   justify-content: center;
   align-items: center;
 }
 
 .logo-image {
   width: 100%;
-  max-width: 900px;
+  max-width: 450px;
   height: auto;
 }
 </style>

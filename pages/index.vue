@@ -1,6 +1,5 @@
 <template>
-
-    <div class="flex flex-column p-4 align-items-center justify-content-center">
+    <div class="flex flex-column p-4 pt-0 align-items-center justify-content-center">
         <div class="w-ful" style="max-width: 1200px;">
             <section class="mb-4">
                 <h4 class="text-colored text-justify">
