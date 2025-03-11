@@ -39,3 +39,8 @@
 	color: #ffffff !important; /* Testo bianco */
 	height: 45px;
 }
+
+.divider {
+	border: 1px solid #9925fe;
+	box-shadow: #9925fe 0px 0px 10px 0px;
+}

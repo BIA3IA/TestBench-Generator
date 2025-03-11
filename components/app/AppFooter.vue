@@ -1,7 +1,7 @@
 <template> 
     <div class="flex justify-content-center align-items-center flex-wrap">    
         <span class="font-small text-colored font-bold">
-            {{ appConfig.brand }} - {{ appConfig.version }} 
+            {{ appConfig.title }} - {{ appConfig.version }} | {{ appConfig.brand }}
         </span>
     </div>
 </template>

@@ -6,12 +6,12 @@
                     Questo tool ti permette di generare automaticamente un file VHDL di testbench basato sulle
                     specifiche
                     del Progetto di Reti Logiche del Politecnico di Milano.
-                    Compila i parametri di test e ottieni un testbench personalizzato!
+                    Compila i parametri e ottieni un testbench personalizzato, oppure genera un testbench
+                    casuale.
                     Se vuoi più informazioni sul progetto, visita questo
                     <a href="https://github.com/BIA3IA/TestBench-Generator">link</a>.
                 </h4>
             </section>
-
             <!-- Form per l'inserimento dei parametri -->
             <Form class="w-full" :validation-schema="schema" @submit="onSubmit">
                 <div class="p-fluid formgrid grid">
@@ -19,14 +19,14 @@
                         <label for="clock-period" class="text-colored font-bold">Periodo di Clock:</label>
                         <Field :rules="schema.fields.CLOCK_PERIOD" v-model="form.CLOCK_PERIOD" name="CLOCK_PERIOD">
                             <InputNumber id="clock-period" suffix=" ns" class="outlined" v-model="form.CLOCK_PERIOD"
-                                required :useGrouping="false" />
+                                :useGrouping="false" />
                         </Field>
                     </div>
                     <div class="field col-12 md:col-3 pb-0 mb-0 flex flex-column justify-content-end">
                         <label for="scenario-length" class="text-colored font-bold">Lunghezza della Sequenza:</label>
                         <Field :rules="schema.fields.SCENARIO_LENGTH" v-model="form.SCENARIO_LENGTH"
                             name="SCENARIO_LENGTH">
-                            <InputNumber id="scenario-length" class="outlined" v-model="form.SCENARIO_LENGTH" required
+                            <InputNumber id="scenario-length" class="outlined" v-model="form.SCENARIO_LENGTH"
                                 :useGrouping="false" />
                         </Field>
                     </div>
@@ -34,7 +34,7 @@
                         <label for="memory-address" class="text-colored font-bold">Indirizzo di Memoria:</label>
                         <Field :rules="schema.fields.SCENARIO_ADDRESS" v-model="form.SCENARIO_ADDRESS"
                             name="SCENARIO_ADDRESS">
-                            <InputNumber id="memory-address" class="outlined" v-model="form.SCENARIO_ADDRESS" required
+                            <InputNumber id="memory-address" class="outlined" v-model="form.SCENARIO_ADDRESS"
                                 :useGrouping="false" />
                         </Field>
                     </div>
@@ -58,26 +58,43 @@
                     <div class="field col-12 md:col-3 pt-0">
                         <ErrorMessage class="error-message" name="SCENARIO_ADDRESS" />
                     </div>
-                    <div class="field col-12">
+                    <div class="field col-12 md:col-9 pb-0 mb-0 flex flex-column justify-content-end">
                         <label for="scenario-input" class="text-colored font-bold">Genera Valori Casuali o Inserisci la
                             Tua Sequenza Numerica:</label>
-                        <div class="grid pt-2">
-                            <div class="col-12 md:col-8">
-                                <Field :rules="schema.fields.SCENARIO_INPUT" v-model="form.SCENARIO_INPUT"
-                                    name="SCENARIO_INPUT">
-                                    <InputText id="scenario-input" class="outlined" v-model="form.SCENARIO_INPUT"
-                                        required placeholder="Inserisci i valori separati da virgola" />
-                                    <ErrorMessage class="error-message" name="SCENARIO_INPUT" />
-                                </Field>
-                            </div>
-                            <div class="col-12 md:col-4">
-                                <Button type="button" class="button-primary" label="Genera Valori Casuali"
-                                    @click="generateRandomValues" />
-                            </div>
-                        </div>
+                        <Field :rules="schema.fields.SCENARIO_INPUT" v-model="form.SCENARIO_INPUT"
+                            name="SCENARIO_INPUT">
+                            <InputText id="scenario-input" class="outlined" v-model="form.SCENARIO_INPUT"
+                                placeholder="Inserisci i valori separati da virgola" />
+                        </Field>
                     </div>
-                    <div class="field col-12">
-                        <Button class="button-primary" type="submit" label="Genera Testbench" />
+                    <div class="field col-12 md:col-3 pb-0 mb-0 flex flex-column justify-content-end">
+                        <Button type="button" class="button-primary" label="Genera Valori Casuali"
+                            @click="generateRandomValues" />
+                    </div>
+                    <div class="field col-12 md:col-12 pt-0">
+                        <ErrorMessage class="error-message" name="SCENARIO_INPUT" />
+                    </div>
+                    <div class="field col-12 md:col-12">
+                        <Button class="button-primary" type="submit" label="Scarica Testbench" />
+                    </div>
+                </div>
+            </Form>
+            <Divider class="divider"/>
+            <Form class="w-full pt-3" :validation-schema="schema_casuale" @submit="generateCasuale">
+                <div class="p-fluid formgrid grid">
+                    <div class="field col-12 md:col-6 pb-0 mb-0 flex flex-column justify-content-end">
+                        <label for="max-input" class="text-colored font-bold">Lunghezza Massima Sequenza Casuale:</label>
+                        <Field :rules="schema_casuale.fields.MAX_SEQUENCE_LENGTH" v-model="MAX_SEQUENCE_LENGTH"
+                            name="MAX_SEQUENCE_LENGTH">
+                            <InputNumber id="max-input" class="outlined" v-model="MAX_SEQUENCE_LENGTH" :useGrouping="false" 
+                                placeholder="Inserisci il valore massimo della lunghezza della sequenza" />
+                        </Field>
+                    </div>
+                    <div class="field col-12 md:col-6 pb-0 mb-0 flex flex-column justify-content-end">
+                        <Button class="button-primary" type="submit" label="Genera e Scarica Testbench Casuale"/>
+                    </div>
+                    <div class="field col-12 md:col-12 pt-0">
+                        <ErrorMessage class="error-message" name="MAX_SEQUENCE_LENGTH" />
                     </div>
                 </div>
             </Form>
@@ -109,10 +126,10 @@ const schema = yup.object().shape({
     SCENARIO_LENGTH: yup.number()
         .required('La lunghezza della sequenza è obbligatoria')
         .positive('Deve essere un numero positivo')
-        .integer('Deve essere un numero intero'),
+        .integer('Deve essere un numero intero')
+        .min(7, 'La lunghezza minima della sequenza deve essere almeno 7'),
     SCENARIO_ADDRESS: yup.number()
         .required('L\'indirizzo di memoria è obbligatorio')
-        .positive('Deve essere un numero positivo')
         .integer('Deve essere un numero intero')
         .test('is-valid-address', function (value) {
             return validateScenarioAddress(value, this);
@@ -127,6 +144,28 @@ const schema = yup.object().shape({
         ),
 });
 
+const schema_casuale = yup.object().shape({
+    MAX_SEQUENCE_LENGTH: yup.number()
+        .required('La lunghezza massima della sequenza è obbligatoria se si vuole generare un testbench casuale')
+        .integer('Deve essere un numero intero')
+        .test('is-valid-max-sequence-length', function (value) {
+            return validateMaxSequenceLength(value, this);
+        })
+});
+
+// Funzione di validazione per MAX_SEQUENCE_LENGTH
+const validateMaxSequenceLength = (value, context) => {
+    if (value < 7) {
+        return context.createError({ message: 'La lunghezza minima della sequenza deve essere almeno 7' });
+    }
+
+    if(value > MAX_RAM_SIZE - 17) {
+        return context.createError({ message: 'La lunghezza massima della sequenza deve essere al massimo ' + (MAX_RAM_SIZE - 17) });
+    }
+
+    return true;
+};
+
 // Funzione di validazione per SCENARIO_INPUT
 const validateScenarioInput = (value, context) => {
     const scenarioLength = context.parent.SCENARIO_LENGTH;
@@ -137,7 +176,7 @@ const validateScenarioInput = (value, context) => {
 
     const numbers = value.split(',').map(num => num.trim());
 
-    if (numbers.length !== scenarioLength) {
+    if (scenarioLength && numbers.length !== scenarioLength) {
         return context.createError({ message: `La sequenza deve contenere esattamente ${scenarioLength} numeri` });
     }
 
@@ -163,6 +202,11 @@ const validateScenarioAddress = (address, context) => {
     if (address > maxAddress) {
         return context.createError({
             message: `L'indirizzo di memoria è troppo alto. Deve essere inferiore a ${maxAddress}.`,
+        });
+    }
+    if( address < 0) {
+        return context.createError({
+            message: `L'indirizzo di memoria deve essere maggiore o uguale a 0.`,
         });
     }
     return true;
@@ -229,23 +273,23 @@ function generateRandomValues() {
 
 // Genera il testbench
 const onSubmit = handleSubmit(async () => {
-    try {
-        // Validazione del form
-        await schema.validate(form.value);
-
-        // Genera il filtro e l'output
-        generateOutput();
-
-        // Genera il codice VHDL
-        const vhdlContent = generateTestbench(form.value);
-
-        // Scarica il file VHDL
-        downloadVHDLFile(vhdlContent);
-
-    } catch (err) {
-        console.error("Errore nella generazione del testbench:", err);
-    }
+    generateOutput();
+    downloadVHDLFile(generateTestbench(form.value));
 });
+
+const MAX_SEQUENCE_LENGTH = ref(null);
+
+const generateCasuale = () => {
+    form.value.CLOCK_PERIOD = 20;
+    form.value.SCENARIO_S = Math.random() < 0.5 ? 0 : 1;
+    form.value.SCENARIO_LENGTH = Math.floor(Math.random() * (MAX_SEQUENCE_LENGTH.value - 7 + 1)) + 7;
+
+    const maxAddress = MAX_RAM_SIZE - 17 - form.value.SCENARIO_LENGTH;
+    form.value.SCENARIO_ADDRESS = Math.floor(Math.random() * (maxAddress + 1));
+    generateRandomValues();
+
+    onSubmit();
+};
 
 function downloadVHDLFile(content, filename = "testbench.vhd") {
     const blob = new Blob([content], { type: "text/plain" });
