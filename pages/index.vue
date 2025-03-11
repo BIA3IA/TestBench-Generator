@@ -1,78 +1,79 @@
 <template>
-    <!-- Descrizione dello strumento -->
-    <div class="flex p-4 pb-0">
-        <h4 class="text-colored text-justify">
-            Questo tool ti permette di generare automaticamente un file VHDL di testbench basato sulle specifiche
-            del Progetto di Reti Logiche del Politecnico di Milano.
-            Compila i parametri di test e ottieni un testbench personalizzato!
-            <br>
-            Se vuoi più informazioni sul progetto, visita questo 
-            <a href="https://github.com/BIA3IA/TestBench-Generator">link</a>.
-        </h4>
-    </div>
-
-    <!-- Form per l'inserimento dei parametri -->
-    <Form class="flex align-items-center p-4 pt-0 mt-0" :validation-schema="schema" @submit="onSubmit">
-        <div class="p-fluid formgrid grid flex">
-            <div class="field col-12 md:col-3">
-                <label for="clock-period" class="text-colored font-bold">Periodo di Clock:</label>
-                <Field :rules="schema.fields.CLOCK_PERIOD" v-model="form.CLOCK_PERIOD" name="CLOCK_PERIOD">
-                    <InputNumber id="clock-period" suffix=" ns" class="outlined" v-model="form.CLOCK_PERIOD"
-                        required :useGrouping="false" />
-                    <ErrorMessage class="error-colored" name="CLOCK_PERIOD" />
-                </Field>
-            </div>
-            <div class="field col-12 md:col-3">
-                <label for="scenario-length" class="text-colored font-bold">Lunghezza della Sequenza:</label>
-                <Field :rules="schema.fields.SCENARIO_LENGTH" v-model="form.SCENARIO_LENGTH" name="SCENARIO_LENGTH">
-                    <InputNumber id="scenario-length" class="outlined" v-model="form.SCENARIO_LENGTH" required
-                        :useGrouping="false" />
-                    <ErrorMessage class="error-colored" name="SCENARIO_LENGTH" />
-                </Field>
-            </div>
-            <div class="field col-12 md:col-3">
-                <label for="memory-address" class="text-colored font-bold">Indirizzo di Memoria:</label>
-                <Field :rules="schema.fields.SCENARIO_ADDRESS" v-model="form.SCENARIO_ADDRESS" name="SCENARIO_ADDRESS">
-                    <InputNumber id="memory-address" class="outlined" v-model="form.SCENARIO_ADDRESS" required
-                        :useGrouping="false" />
-                    <ErrorMessage class="error-colored" name="SCENARIO_ADDRESS" />
-                </Field>
-            </div>
-            <div class="field col-12 md:col-3">
-                <label class="text-colored font-bold">Filtro:</label>
-                <div class="status-button-group">
-                    <Button label="Ordine 3"
-                        :class="{ 'p-button-primary': form.SCENARIO_S === 0, 'p-button-secondary': form.SCENARIO_S !== 0 }"
-                        @click="setScenario(0)" />
-                    <Button label="Ordine 5"
-                        :class="{ 'p-button-primary': form.SCENARIO_S === 1, 'p-button-secondary': form.SCENARIO_S !== 1 }"
-                        @click="setScenario(1)" />
-                </div>
-            </div>
-            <div class="field col-12">
-                <label for="scenario-input" class="text-colored font-bold">Genera Valori Casuali o Inserisci la
-                    Tua Sequenza
-                    Numerica:</label>
-                <div class="grid pt-2">
-                    <div class="col-12 md:col-8">
-                        <Field :rules="schema.fields.SCENARIO_INPUT" v-model="form.SCENARIO_INPUT"
-                            name="SCENARIO_INPUT">
-                            <InputText id="scenario-input" class="outlined" v-model="form.SCENARIO_INPUT"
-                                required placeholder="Inserisci i valori separati da virgola" />
-                            <ErrorMessage class="error-colored" name="SCENARIO_INPUT" />
-                        </Field>
-                    </div>
-                    <div class="col-12 md:col-4">
-                        <Button class="p-button-primary" label="Genera Valori Casuali"
-                            @click="generateRandomValues" />
-                    </div>
-                </div>
-            </div>
-            <div class="field col-12">
-                <Button class="p-button-primary" type="submit" label="Genera Testbench" />
-            </div>
+   
+    <div class="flex flex-column p-4 align-items-center justify-content-center">
+        <div class="w-full">
+            <h4 class="text-colored text-justify">
+                Questo tool ti permette di generare automaticamente un file VHDL di testbench basato sulle specifiche
+                del Progetto di Reti Logiche del Politecnico di Milano.
+                Compila i parametri di test e ottieni un testbench personalizzato!
+                Se vuoi più informazioni sul progetto, visita questo
+                <a href="https://github.com/BIA3IA/TestBench-Generator">link</a>.
+            </h4>
         </div>
-    </Form>
+
+        <!-- Form per l'inserimento dei parametri -->
+        <Form class="w-full" :validation-schema="schema" @submit="onSubmit">
+            <div class="p-fluid formgrid grid">
+                <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+                    <label for="clock-period" class="text-colored font-bold">Periodo di Clock:</label>
+                    <Field :rules="schema.fields.CLOCK_PERIOD" v-model="form.CLOCK_PERIOD" name="CLOCK_PERIOD">
+                        <InputNumber id="clock-period" suffix=" ns" class="outlined" v-model="form.CLOCK_PERIOD"
+                            required :useGrouping="false" />
+                        <ErrorMessage class="error-colored" name="CLOCK_PERIOD" />
+                    </Field>
+                </div>
+                <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+                    <label for="scenario-length" class="text-colored font-bold">Lunghezza della Sequenza:</label>
+                    <Field :rules="schema.fields.SCENARIO_LENGTH" v-model="form.SCENARIO_LENGTH" name="SCENARIO_LENGTH">
+                        <InputNumber id="scenario-length" class="outlined" v-model="form.SCENARIO_LENGTH" required
+                            :useGrouping="false" />
+                        <ErrorMessage class="error-colored" name="SCENARIO_LENGTH" />
+                    </Field>
+                </div>
+                <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+                    <label for="memory-address" class="text-colored font-bold">Indirizzo di Memoria:</label>
+                    <Field :rules="schema.fields.SCENARIO_ADDRESS" v-model="form.SCENARIO_ADDRESS"
+                        name="SCENARIO_ADDRESS">
+                        <InputNumber id="memory-address" class="outlined" v-model="form.SCENARIO_ADDRESS" required
+                            :useGrouping="false" />
+                        <ErrorMessage class="error-colored" name="SCENARIO_ADDRESS" />
+                    </Field>
+                </div>
+                <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+                    <label class="text-colored font-bold">Filtro:</label>
+                    <div class="status-button-group">
+                        <Button label="Ordine 3"
+                            :class="{ 'p-button-primary': form.SCENARIO_S === 0, 'p-button-secondary': form.SCENARIO_S !== 0 }"
+                            @click="setScenario(0)" />
+                        <Button label="Ordine 5"
+                            :class="{ 'p-button-primary': form.SCENARIO_S === 1, 'p-button-secondary': form.SCENARIO_S !== 1 }"
+                            @click="setScenario(1)" />
+                    </div>
+                </div>
+                <div class="field col-12">
+                    <label for="scenario-input" class="text-colored font-bold">Genera Valori Casuali o Inserisci la
+                        Tua Sequenza Numerica:</label>
+                    <div class="grid pt-2">
+                        <div class="col-12 md:col-8 flex flex-column justify-content-end">
+                            <Field :rules="schema.fields.SCENARIO_INPUT" v-model="form.SCENARIO_INPUT"
+                                name="SCENARIO_INPUT">
+                                <InputText id="scenario-input" class="outlined" v-model="form.SCENARIO_INPUT" required
+                                    placeholder="Inserisci i valori separati da virgola" />
+                                <ErrorMessage class="error-colored" name="SCENARIO_INPUT" />
+                            </Field>
+                        </div>
+                        <div class="col-12 md:col-4 flex flex-column justify-content-end">
+                            <Button class="p-button-primary" label="Genera Valori Casuali"
+                                @click="generateRandomValues" />
+                        </div>
+                    </div>
+                </div>
+                <div class="field col-12">
+                    <Button class="p-button-primary" type="submit" label="Genera Testbench" />
+                </div>
+            </div>
+        </Form>
+    </div>
 </template>
 
 <script setup>
@@ -250,4 +251,3 @@ function downloadVHDLFile(content, filename = "testbench.vhd") {
 }
 
 </script>
-
