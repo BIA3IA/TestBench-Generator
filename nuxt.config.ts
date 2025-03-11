@@ -7,6 +7,9 @@ export default defineNuxtConfig({
         class: "neutral-2-bg-a1",
       },
       title: "Testbench Generator",
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/testbench-generator/favicon.ico' }
+      ]
     },
   },
 
@@ -24,7 +27,6 @@ export default defineNuxtConfig({
   },
 
   css: [
-    "primeicons/primeicons.css",
     "primeflex/primeflex.css",
     "primevue/resources/themes/mdc-dark-deeppurple/theme.css",
     "primevue/resources/primevue.min.css",
