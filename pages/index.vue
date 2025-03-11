@@ -164,12 +164,12 @@ const validateScenarioAddress = (address, context) => {
     const maxAddress = MAX_RAM_SIZE - 17 - scenarioLength;
     if (address > maxAddress) {
         return context.createError({
-            message: `Deve essere inferiore a ${maxAddress}.`,
+            message: `Deve essere inferiore a ${maxAddress}`,
         });
     }
     if (address < 0) {
         return context.createError({
-            message: `Deve essere maggiore o uguale a 0.`,
+            message: `Deve essere maggiore o uguale a 0`,
         });
     }
     return true;
