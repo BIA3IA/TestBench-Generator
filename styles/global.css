@@ -14,8 +14,9 @@
 	color: #9925fe;
 }
 
-.error-colored {
+.error-message{
 	color: #fe25e1;
+	font-size: 0.8rem;
 }
 
 .outlined {
@@ -27,13 +28,13 @@
 	gap: 0.5rem;
 }
 
-.p-button-secondary {
+.button-secondary {
 	background-color: #a1a1a1 !important; /* Grigio chiaro */
 	color: #3a3a3a !important; /* Testo grigio scuro */
 	height: 45px;
 }
 
-.p-button-primary {
+.button-primary {
 	background-color: #9925fe !important; /* Viola */
 	color: #ffffff !important; /* Testo bianco */
 	height: 45px;
