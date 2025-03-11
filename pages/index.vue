@@ -1,104 +1,79 @@
 <template>
-    <div class="flex flex-column p-4 pt-0 align-items-center justify-content-center">
-        <div class="w-ful" style="max-width: 1200px;">
-            <section class="mb-4">
-                <h4 class="text-colored text-justify">
-                    Questo tool ti permette di generare automaticamente un file VHDL di testbench basato sulle
-                    specifiche
-                    del Progetto di Reti Logiche del Politecnico di Milano.
-                    Compila i parametri e ottieni un testbench personalizzato, oppure genera un testbench
-                    casuale.
-                    Se vuoi più informazioni sul progetto, visita questo
-                    <a href="https://github.com/BIA3IA/TestBench-Generator">link</a>.
-                </h4>
-            </section>
-            <!-- Form per l'inserimento dei parametri -->
-            <Form class="w-full" :validation-schema="schema" @submit="onSubmit">
-                <div class="p-fluid formgrid grid">
-                    <div class="field col-12 md:col-3 pb-0 mb-0 flex flex-column justify-content-end">
-                        <label for="clock-period" class="text-colored font-bold">Periodo di Clock:</label>
-                        <Field :rules="schema.fields.CLOCK_PERIOD" v-model="form.CLOCK_PERIOD" name="CLOCK_PERIOD">
-                            <InputNumber id="clock-period" suffix=" ns" class="outlined" v-model="form.CLOCK_PERIOD"
-                                :useGrouping="false" />
-                        </Field>
-                    </div>
-                    <div class="field col-12 md:col-3 pb-0 mb-0 flex flex-column justify-content-end">
-                        <label for="scenario-length" class="text-colored font-bold">Lunghezza della Sequenza:</label>
-                        <Field :rules="schema.fields.SCENARIO_LENGTH" v-model="form.SCENARIO_LENGTH"
-                            name="SCENARIO_LENGTH">
-                            <InputNumber id="scenario-length" class="outlined" v-model="form.SCENARIO_LENGTH"
-                                :useGrouping="false" />
-                        </Field>
-                    </div>
-                    <div class="field col-12 md:col-3 pb-0 mb-0 flex flex-column justify-content-end">
-                        <label for="memory-address" class="text-colored font-bold">Indirizzo di Memoria:</label>
-                        <Field :rules="schema.fields.SCENARIO_ADDRESS" v-model="form.SCENARIO_ADDRESS"
-                            name="SCENARIO_ADDRESS">
-                            <InputNumber id="memory-address" class="outlined" v-model="form.SCENARIO_ADDRESS"
-                                :useGrouping="false" />
-                        </Field>
-                    </div>
-                    <div class="field col-12 md:col-3 pb-0 mb-0 flex flex-column justify-content-end">
-                        <label class="text-colored font-bold">Filtro:</label>
-                        <div class="status-button-group">
-                            <Button label="Ordine 3" type="button"
-                                :class="{ 'button-primary': form.SCENARIO_S === 0, 'button-secondary': form.SCENARIO_S !== 0 }"
-                                @click="setScenario(0)" />
-                            <Button label="Ordine 5" type="button"
-                                :class="{ 'button-primary': form.SCENARIO_S === 1, 'button-secondary': form.SCENARIO_S !== 1 }"
-                                @click="setScenario(1)" />
-                        </div>
-                    </div>
-                    <div class="field col-12 md:col-3 pt-0">
-                        <ErrorMessage class="error-message" name="CLOCK_PERIOD" />
-                    </div>
-                    <div class="field col-12 md:col-3 pt-0">
-                        <ErrorMessage class="error-message" name="SCENARIO_LENGTH" />
-                    </div>
-                    <div class="field col-12 md:col-3 pt-0">
-                        <ErrorMessage class="error-message" name="SCENARIO_ADDRESS" />
-                    </div>
-                    <div class="field col-12 md:col-9 pb-0 mb-0 flex flex-column justify-content-end">
-                        <label for="scenario-input" class="text-colored font-bold">Genera Valori Casuali o Inserisci la
-                            Tua Sequenza Numerica:</label>
-                        <Field :rules="schema.fields.SCENARIO_INPUT" v-model="form.SCENARIO_INPUT"
-                            name="SCENARIO_INPUT">
-                            <InputText id="scenario-input" class="outlined" v-model="form.SCENARIO_INPUT"
-                                placeholder="Inserisci i valori separati da virgola" />
-                        </Field>
-                    </div>
-                    <div class="field col-12 md:col-3 pb-0 mb-0 flex flex-column justify-content-end">
-                        <Button type="button" class="button-primary" label="Genera Valori Casuali"
-                            @click="generateRandomValues" />
-                    </div>
-                    <div class="field col-12 md:col-12 pt-0">
-                        <ErrorMessage class="error-message" name="SCENARIO_INPUT" />
-                    </div>
-                    <div class="field col-12 md:col-12">
-                        <Button class="button-primary" type="submit" label="Scarica Testbench" />
+    <div class="flex flex-column p-4 align-items-center justify-content-center">
+        <Form class="w-full" style="max-width: 1200px;" :validation-schema="schema" @submit="onSubmit">
+            <div class="p-fluid formgrid grid">
+                <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+                    <label for="clock-period" class="text-colored font-bold">Periodo di Clock:</label>
+                    <ErrorMessage class="error-message" name="CLOCK_PERIOD" />
+                    <Field :rules="schema.fields.CLOCK_PERIOD" v-model="form.CLOCK_PERIOD" name="CLOCK_PERIOD">
+                        <InputNumber id="clock-period" suffix=" ns" class="outlined" v-model="form.CLOCK_PERIOD"
+                            :useGrouping="false" placeholder="Inserisci il periodo di clock" />
+                    </Field>
+                </div>
+                <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+                    <label for="scenario-length" class="text-colored font-bold">Lunghezza della Sequenza:</label>
+                    <ErrorMessage class="error-message" name="SCENARIO_LENGTH" />
+                    <Field :rules="schema.fields.SCENARIO_LENGTH" v-model="form.SCENARIO_LENGTH" name="SCENARIO_LENGTH">
+                        <InputNumber id="scenario-length" class="outlined" v-model="form.SCENARIO_LENGTH"
+                            :useGrouping="false" placeholder="Inserisci la lunghezza" />
+                    </Field>
+                </div>
+                <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+                    <label for="memory-address" class="text-colored font-bold">Indirizzo di Memoria:</label>
+                    <ErrorMessage class="error-message" name="SCENARIO_ADDRESS" />
+                    <Field :rules="schema.fields.SCENARIO_ADDRESS" v-model="form.SCENARIO_ADDRESS"
+                        name="SCENARIO_ADDRESS">
+                        <InputNumber id="memory-address" class="outlined" v-model="form.SCENARIO_ADDRESS"
+                            :useGrouping="false" placeholder="Inserisci l'indirizzo di memoria" />
+                    </Field>
+                </div>
+                <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+                    <label class="text-colored font-bold">Filtro:</label>
+                    <div class="status-button-group">
+                        <Button label="Ordine 3" type="button"
+                            :class="{ 'button-primary': form.SCENARIO_S === 0, 'button-secondary': form.SCENARIO_S !== 0 }"
+                            @click="setScenario(0)" />
+                        <Button label="Ordine 5" type="button"
+                            :class="{ 'button-primary': form.SCENARIO_S === 1, 'button-secondary': form.SCENARIO_S !== 1 }"
+                            @click="setScenario(1)" />
                     </div>
                 </div>
-            </Form>
-            <Divider class="divider"/>
-            <Form class="w-full pt-3" :validation-schema="schema_casuale" @submit="generateCasuale">
-                <div class="p-fluid formgrid grid">
-                    <div class="field col-12 md:col-6 pb-0 mb-0 flex flex-column justify-content-end">
-                        <label for="max-input" class="text-colored font-bold">Lunghezza Massima Sequenza Casuale:</label>
-                        <Field :rules="schema_casuale.fields.MAX_SEQUENCE_LENGTH" v-model="MAX_SEQUENCE_LENGTH"
-                            name="MAX_SEQUENCE_LENGTH">
-                            <InputNumber id="max-input" class="outlined" v-model="MAX_SEQUENCE_LENGTH" :useGrouping="false" 
-                                placeholder="Inserisci il valore massimo della lunghezza della sequenza" />
-                        </Field>
-                    </div>
-                    <div class="field col-12 md:col-6 pb-0 mb-0 flex flex-column justify-content-end">
-                        <Button class="button-primary" type="submit" label="Genera e Scarica Testbench Casuale"/>
-                    </div>
-                    <div class="field col-12 md:col-12 pt-0">
-                        <ErrorMessage class="error-message" name="MAX_SEQUENCE_LENGTH" />
-                    </div>
+                <div class="field col-12 md:col-9 flex flex-column justify-content-end">
+                    <label for="scenario-input" class="text-colored font-bold">Genera Valori Casuali o Inserisci la
+                        Tua Sequenza Numerica:</label>
+                    <ErrorMessage class="error-message" name="SCENARIO_INPUT" />
+                    <Field :rules="schema.fields.SCENARIO_INPUT" v-model="form.SCENARIO_INPUT" name="SCENARIO_INPUT">
+                        <InputText id="scenario-input" class="outlined" v-model="form.SCENARIO_INPUT"
+                            placeholder="Inserisci i valori separati da virgola" />
+                    </Field>
                 </div>
-            </Form>
-        </div>
+                <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+                    <Button type="button" class="button-primary" label="Genera Valori Casuali"
+                        @click="generateRandomValues" />
+                </div>
+                <div class="field col-12 md:col-12">
+                    <Button class="button-primary" type="submit" label="Scarica Testbench" />
+                </div>
+            </div>
+        </Form>
+        <Divider class="divider" style="max-width: 1200px;" />
+        <Form class="w-full pt-3" style="max-width: 1200px;" :validation-schema="schema_casuale"
+            @submit="generateCasuale">
+            <div class="p-fluid formgrid grid">
+                <div class="field col-12 md:col-6 flex flex-column justify-content-end">
+                    <label for="max-input" class="text-colored font-bold">Lunghezza Massima Sequenza Casuale:</label>
+                    <ErrorMessage class="error-message" name="MAX_SEQUENCE_LENGTH" />
+                    <Field :rules="schema_casuale.fields.MAX_SEQUENCE_LENGTH" v-model="MAX_SEQUENCE_LENGTH"
+                        name="MAX_SEQUENCE_LENGTH">
+                        <InputNumber id="max-input" class="outlined" v-model="MAX_SEQUENCE_LENGTH" :useGrouping="false"
+                            placeholder="Inserisci il valore massimo della lunghezza della sequenza" />
+                    </Field>
+                </div>
+                <div class="field col-12 md:col-6 flex flex-column justify-content-end">
+                    <Button class="button-primary" type="submit" label="Genera e Scarica Testbench Casuale" />
+                </div>
+            </div>
+        </Form>
     </div>
 </template>
 
@@ -121,15 +96,17 @@ const form = ref({
 // Schema di validazione
 const schema = yup.object().shape({
     CLOCK_PERIOD: yup.number()
-        .required('Il periodo di clock è obbligatorio')
-        .positive('Deve essere un numero positivo'),
+        .required('É obbligatorio')
+        .positive('Deve essere un numero positivo')
+        .integer('Deve essere un numero intero'),
     SCENARIO_LENGTH: yup.number()
-        .required('La lunghezza della sequenza è obbligatoria')
+        .required('É obbligatoria')
         .positive('Deve essere un numero positivo')
         .integer('Deve essere un numero intero')
-        .min(7, 'La lunghezza minima della sequenza deve essere almeno 7'),
+        .min(7, 'Deve essere almeno 7')
+        .max(MAX_RAM_SIZE - 17, 'Deve essere al massimo ' + (MAX_RAM_SIZE - 17) ),
     SCENARIO_ADDRESS: yup.number()
-        .required('L\'indirizzo di memoria è obbligatorio')
+        .required('É obbligatorio')
         .integer('Deve essere un numero intero')
         .test('is-valid-address', function (value) {
             return validateScenarioAddress(value, this);
@@ -146,44 +123,30 @@ const schema = yup.object().shape({
 
 const schema_casuale = yup.object().shape({
     MAX_SEQUENCE_LENGTH: yup.number()
-        .required('La lunghezza massima della sequenza è obbligatoria se si vuole generare un testbench casuale')
+        .required('É obbligatoria se si vuole generare un testbench casuale')
         .integer('Deve essere un numero intero')
-        .test('is-valid-max-sequence-length', function (value) {
-            return validateMaxSequenceLength(value, this);
-        })
+        .min(7, 'Deve essere almeno 7')
+        .max(MAX_RAM_SIZE - 17, 'Deve essere al massimo ' + (MAX_RAM_SIZE - 17) ),
 });
-
-// Funzione di validazione per MAX_SEQUENCE_LENGTH
-const validateMaxSequenceLength = (value, context) => {
-    if (value < 7) {
-        return context.createError({ message: 'La lunghezza minima della sequenza deve essere almeno 7' });
-    }
-
-    if(value > MAX_RAM_SIZE - 17) {
-        return context.createError({ message: 'La lunghezza massima della sequenza deve essere al massimo ' + (MAX_RAM_SIZE - 17) });
-    }
-
-    return true;
-};
 
 // Funzione di validazione per SCENARIO_INPUT
 const validateScenarioInput = (value, context) => {
     const scenarioLength = context.parent.SCENARIO_LENGTH;
 
     if (!value) {
-        return context.createError({ message: 'La sequenza numerica è obbligatoria' });
+        return context.createError({ message: 'É obbligatoria' });
     }
 
     const numbers = value.split(',').map(num => num.trim());
 
     if (scenarioLength && numbers.length !== scenarioLength) {
-        return context.createError({ message: `La sequenza deve contenere esattamente ${scenarioLength} numeri` });
+        return context.createError({ message: `Deve contenere ${scenarioLength} numeri` });
     }
 
     for (let num of numbers) {
         const parsedNum = parseInt(num, 10);
         if (isNaN(parsedNum)) {
-            return context.createError({ message: `La sequenza contiene un valore non numerico: "${num}"` });
+            return context.createError({ message: `Contiene un valore non numerico: "${num}"` });
         }
         if (parsedNum < -128 || parsedNum > 127) {
             return context.createError({ message: `Il numero ${parsedNum} non è compreso tra -128 e 127` });
@@ -201,12 +164,12 @@ const validateScenarioAddress = (address, context) => {
     const maxAddress = MAX_RAM_SIZE - 17 - scenarioLength;
     if (address > maxAddress) {
         return context.createError({
-            message: `L'indirizzo di memoria è troppo alto. Deve essere inferiore a ${maxAddress}.`,
+            message: `Deve essere inferiore a ${maxAddress}.`,
         });
     }
-    if( address < 0) {
+    if (address < 0) {
         return context.createError({
-            message: `L'indirizzo di memoria deve essere maggiore o uguale a 0.`,
+            message: `Deve essere maggiore o uguale a 0.`,
         });
     }
     return true;
