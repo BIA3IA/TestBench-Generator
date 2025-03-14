@@ -37,8 +37,8 @@ architecture project_tb_arch of tb2425 is
     
     signal scenario_config : scenario_config_type := (to_integer(unsigned(SCENARIO_LENGTH_STL(15 downto 8))),   -- K1
                                                       to_integer(unsigned(SCENARIO_LENGTH_STL(7 downto 0))),    -- K2
-                                                      ${params.SCENARIO_S},                                               -- S
-                                                      0, -1, 8, 0, -8, 1, 0, 1, -9, 45, 0, -45, 9, -1           -- C1-C14
+                                                      ${params.SCENARIO_S},                                     -- S
+                                                      ${params.SCENARIO_COEFFS}                                 -- C1-C14
                                                       );
     signal scenario_input : scenario_type := (${params.SCENARIO_INPUT});
     signal scenario_output : scenario_type := (${params.SCENARIO_OUTPUT});
