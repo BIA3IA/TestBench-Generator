@@ -235,7 +235,7 @@ function generateOutput() {
 
     // Coefficienti e normalizzazione in base all'ordine scelto
     const coeffsFull = form.value.SCENARIO_COEFFS.split(',').map(num => parseInt(num.trim()));
-    const coeffs = isOrder3 ? coeffsFull.slice(0, 7) : coeffsFull.slice(7, 14);
+    const coeffs = isOrder3 ? coeffsFull.slice(1, 6) : coeffsFull.slice(7, 14);
 
     const filterLength = coeffs.length;
     const halfFilter = Math.floor(filterLength / 2);
