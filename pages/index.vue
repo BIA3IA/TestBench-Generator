@@ -31,10 +31,10 @@
                     <label class="text-colored font-bold">Filtro:</label>
                     <div class="status-button-group">
                         <Button label="Ordine 3" type="button"
-                            :class="{ 'button-primary': form.SCENARIO_S === 0, 'button-secondary': form.SCENARIO_S !== 0 }"
+                            :class="{ 'button-primary': flilterType === 0, 'button-secondary': flilterType !== 0 }"
                             @click="setScenario(0)" />
                         <Button label="Ordine 5" type="button"
-                            :class="{ 'button-primary': form.SCENARIO_S === 1, 'button-secondary': form.SCENARIO_S !== 1 }"
+                            :class="{ 'button-primary': flilterType === 1, 'button-secondary': flilterType !== 1 }"
                             @click="setScenario(1)" />
                     </div>
                 </div>
@@ -106,6 +106,8 @@ const form = ref({
     SCENARIO_ADDRESS: 1234,
     SCENARIO_COEFFS: "0, -1, 8, 0, -8, 1, 0, 1, -9, 45, 0, -45, 9, -1"
 });
+
+const flilterType = ref(0);
 
 // Schema di validazione
 const schema = yup.object().shape({
@@ -224,14 +226,14 @@ const validateScenarioAddress = (address, context) => {
 };
 
 function setScenario(value) {
-    form.value.SCENARIO_S = value;
+    flilterType.value = value;
 }
 
 // Applicare filtro differenziale di ordine 5 o 3
 function generateOutput() {
     const input = form.value.SCENARIO_INPUT.split(',').map(num => parseInt(num.trim()));
     const output = [];
-    const isOrder3 = form.value.SCENARIO_S === 0;
+    const isOrder3 = flilterType.value === 0;
 
     // Coefficienti e normalizzazione in base all'ordine scelto
     const coeffsFull = form.value.SCENARIO_COEFFS.split(',').map(num => parseInt(num.trim()));
@@ -294,9 +296,17 @@ function generateRandomCoeffs() {
     form.value.SCENARIO_COEFFS = coeffs.join(", ");
 }
 
+// Genera un byte casuale con il bit meno significativo impostato a desiredLSB
+function randomSForFilter(desiredLSB) {
+  let randomByte = Math.floor(Math.random() * 256);
+  
+  form.value.SCENARIO_S = (randomByte & ~1) | desiredLSB;
+}
+
 // Genera il testbench
 const onSubmit = handleSubmit(async () => {
     generateOutput();
+    randomSForFilter(flilterType.value);
     downloadVHDLFile(generateTestbench(form.value));
 });
 
@@ -305,7 +315,7 @@ const MAX_SEQUENCE_LENGTH = ref(null);
 // Genera un testbench casuale
 const generateCasuale = () => {
     form.value.CLOCK_PERIOD = 20;
-    form.value.SCENARIO_S = Math.random() < 0.5 ? 0 : 1;
+    flilterType.value = Math.random() < 0.5 ? 0 : 1;
     form.value.SCENARIO_LENGTH = Math.floor(Math.random() * (MAX_SEQUENCE_LENGTH.value - 7 + 1)) + 7;
 
     const maxAddress = MAX_RAM_SIZE - 17 - form.value.SCENARIO_LENGTH;
